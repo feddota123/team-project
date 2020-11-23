@@ -1,0 +1,55 @@
+import vk                                                                                         
+import datetime                                                                                   
+from datetime import timedelta                                                                    
+import time                                                                                       
+                                                                                                  
+t0 = time.time()                                                                                  
+token = "65e6efa565e6efa565e6efa54f6593fb1f665e665e6efa53a5c6937a4636b3416a8bd92"                 
+vk_api = vk.Api(token)                                                                            
+group = vk_api.get_group('sfabuzerrr')                                                            
+user_id_items = [user_id for user_id in group.get_members_only_id()]                              
+                                                                                                  
+                                                                                                  
+def user_last_seen(user_id):                                                                      
+    user = vk_api.get_user(user_id)                                                               
+    online_time = user.last_seen                                                                  
+    return online_time                                                                            
+                                                                                                  
+                                                                                                  
+def approximate_time(online_time):                                                                
+    approximated_online_time = online_time + timedelta(hours=3, minutes=2)                        
+    return approximated_online_time                                                               
+                                                                                                  
+                                                                                                  
+def is_online(online_time):                                                                       
+    now_time = datetime.datetime.now()                                                            
+    now_time = now_time.replace(microsecond=0)                                                    
+    if online_time >= now_time:                                                                   
+        return 1                                                                                  
+    else:                                                                                         
+        return 0                                                                                  
+                                                                                                  
+                                                                                                  
+def online_proportion(group_id):                                                                  
+    group_members_ids = group_id                                                                  
+    group_amount = 0                                                                              
+    group_online = 0                                                                              
+    for user_id in group_members_ids:                                                             
+        profile_last_seen = user_last_seen(user_id)                                               
+        if profile_last_seen is not None:                                                         
+            group_amount += 1                                                                     
+            profile_last_seen = approximate_time(profile_last_seen)                               
+            group_online += is_online(profile_last_seen)                                          
+            print(group_amount)                                                                   
+    if group_amount == 0:                                                                         
+        return -1                                                                                 
+    else:                                                                                         
+        percent_online = group_online / group_amount * 100                                        
+        print(group_online, group_amount)                                                         
+        return percent_online                                                                     
+                                                                                                  
+                                                                                                  
+print(online_proportion(user_id_items))                                                           
+t1 = time.time()                                                                                  
+print(t1 - t0)                                                                                    
+                                                                                                  
